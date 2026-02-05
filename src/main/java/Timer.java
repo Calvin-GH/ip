@@ -17,6 +17,9 @@ public class Timer {
         System.out.println("Hello! I'm Timer");
         System.out.println("What can I do for you?");
         printLine();
+        System.out.println("Hello! I'm Timer");
+        System.out.println("What can I do for you?");
+        printLine();
 
         Scanner scanner = new Scanner(System.in);
 
