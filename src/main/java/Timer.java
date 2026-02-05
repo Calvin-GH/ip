@@ -11,14 +11,10 @@ public class Timer {
                 + "  | | | | | | | | |  __/ |    \n"
                 + "  |_| |_|_| |_| |_|\\___|_|    \n";
 
-        System.out.println("Hello from\n" + logo);
-
+        System.out.println("Hello you can call me\n" + logo);
         printLine();
-        System.out.println("Hello! I'm Timer");
-        System.out.println("What can I do for you?");
-        printLine();
-        System.out.println("Hello! I'm Timer");
-        System.out.println("What can I do for you?");
+        System.out.println("Wassup! I'm Timer");
+        System.out.println("How can I help you kind sir?");
         printLine();
 
         Scanner scanner = new Scanner(System.in);
