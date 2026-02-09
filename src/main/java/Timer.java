@@ -48,83 +48,28 @@ public class Timer {
             }
 
             if (input.startsWith("todo ")) {
-                String desc = input.substring("todo ".length()).trim();
-                if (desc.isEmpty()) {
-                    printLine();
-                    System.out.println("Please provide a description for a todo.");
-                    printLine();
-                    continue;
-                }
-                if (taskCount >= MAX_TASKS) {
-                    printFullMessage();
-                    continue;
-                }
-
-                Task t = new Todo(desc);
-                tasks[taskCount++] = t;
-                printTaskAdded(t, taskCount);
+                taskCount = handleTodo(tasks, taskCount, input);
                 continue;
             }
 
             if (input.startsWith("deadline ")) {
-                String rest = input.substring("deadline ".length()).trim();
-                String[] parts = rest.split(" /by ", 2); // split into at most 2 parts
-
-                if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-                    printLine();
-                    System.out.println("Please use: deadline <description> /by <by>");
-                    printLine();
-                    continue;
-                }
-                if (taskCount >= MAX_TASKS) {
-                    printFullMessage();
-                    continue;
-                }
-
-                Task t = new Deadline(parts[0].trim(), parts[1].trim());
-                tasks[taskCount++] = t;
-                printTaskAdded(t, taskCount);
+                taskCount = handleDeadline(tasks, taskCount, input);
                 continue;
             }
 
             if (input.startsWith("event ")) {
-                String rest = input.substring("event ".length()).trim();
-
-                int fromPos = rest.indexOf(" /from ");
-                int toPos = rest.indexOf(" /to ");
-
-                if (fromPos == -1 || toPos == -1 || toPos < fromPos) {
-                    printLine();
-                    System.out.println("Please use: event <description> /from <from> /to <to>");
-                    printLine();
-                    continue;
-                }
-
-                String desc = rest.substring(0, fromPos).trim();
-                String from = rest.substring(fromPos + " /from ".length(), toPos).trim();
-                String to = rest.substring(toPos + " /to ".length()).trim();
-
-                if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                    printLine();
-                    System.out.println("Please use: event <description> /from <from> /to <to>");
-                    printLine();
-                    continue;
-                }
-                if (taskCount >= MAX_TASKS) {
-                    printFullMessage();
-                    continue;
-                }
-
-                Task t = new Event(desc, from, to);
-                tasks[taskCount++] = t;
-                printTaskAdded(t, taskCount);
+                taskCount = handleEvent(tasks, taskCount, input);
                 continue;
             }
 
-            printLine();
-            System.out.println("Sorry, I don't understand that command yet.");
-            printLine();
+            printWrapped("Sorry, I don't understand that command yet.");
         }
+    }
+
+    private static void printWrapped(String message) {
+        printLine();
+        System.out.println(message);
+        printLine();
     }
 
     private static void handleMark(Task[] tasks, int taskCount, String input, boolean markDone) {
@@ -149,6 +94,79 @@ public class Timer {
             System.out.println("  " + tasks[index]);
             printLine();
         }
+    }
+
+    private static int handleTodo(Task[] tasks, int taskCount, String input) {
+        String description = input.substring("todo ".length()).trim();
+        if (description.isEmpty()) {
+            printLine();
+            System.out.println("Please provide a description for a todo.");
+            printLine();
+            return taskCount;
+        }
+        if (taskCount >= MAX_TASKS) {
+            printFullMessage();
+            return taskCount;
+        }
+        Task task = new Todo(description);
+        tasks[taskCount++] = task;
+        printTaskAdded(task, taskCount);
+        return taskCount;
+    }
+
+    private static int handleDeadline(Task[] tasks, int taskCount, String input) {
+        String arguments = input.substring("deadline ".length()).trim();
+        String[] parts = arguments.split(" /by ", 2);
+
+        if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+            printLine();
+            System.out.println("Please use: deadline <description> /by <by>");
+            printLine();
+            return taskCount;
+        }
+        if (taskCount >= MAX_TASKS) {
+            printFullMessage();
+            return taskCount;
+        }
+
+        Task task = new Deadline(parts[0].trim(), parts[1].trim());
+        tasks[taskCount++] = task;
+        printTaskAdded(task, taskCount);
+        return taskCount;
+    }
+
+    private static int handleEvent(Task[] tasks, int taskCount, String input) {
+        String arguments = input.substring("event ".length()).trim();
+
+        int fromPos = arguments.indexOf(" /from ");
+        int toPos = arguments.indexOf(" /to ");
+
+        if (fromPos == -1 || toPos == -1 || toPos < fromPos) {
+            printLine();
+            System.out.println("Please use: event <description> /from <from> /to <to>");
+            printLine();
+            return taskCount;
+        }
+
+        String description = arguments.substring(0, fromPos).trim();
+        String from = arguments.substring(fromPos + " /from ".length(), toPos).trim();
+        String to = arguments.substring(toPos + " /to ".length()).trim();
+
+        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            printLine();
+            System.out.println("Please use: event <description> /from <from> /to <to>");
+            printLine();
+            return taskCount;
+        }
+        if (taskCount >= MAX_TASKS) {
+            printFullMessage();
+            return taskCount;
+        }
+
+        Task task = new Event(description, from, to);
+        tasks[taskCount++] = task;
+        printTaskAdded(task, taskCount);
+        return taskCount;
     }
 
     private static void printList(Task[] tasks, int taskCount) {
