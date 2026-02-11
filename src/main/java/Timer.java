@@ -46,7 +46,6 @@ public class Timer {
                     continue;
                 }
 
-<<<<<<< HEAD
                 if (input.equals("todo") || input.startsWith("todo ")) {
                     taskCount = handleTodo(tasks, taskCount, input);
                     continue;
@@ -62,29 +61,12 @@ public class Timer {
                     continue;
                 }
 
-                throw new DukeException("Sorry, I don't understand that command.");
+                throw new DukeException("Sorry, I don't understand that command. "
+                        + "Try: list, todo, deadline, event, mark, unmark, bye.");
 
             } catch (DukeException e) {
                 printWrapped(e.getMessage());
             }
-=======
-            if (input.equals("todo") || input.startsWith("todo ")) {
-                taskCount = handleTodo(tasks, taskCount, input);
-                continue;
-            }
-
-            if (input.equals("deadline") || input.startsWith("deadline ")) {
-                taskCount = handleDeadline(tasks, taskCount, input);
-                continue;
-            }
-
-            if (input.equals("event") || input.startsWith("event ")) {
-                taskCount = handleEvent(tasks, taskCount, input);
-                continue;
-            }
-
-            printWrapped("I don't understand that. Try: list, todo, deadline, event, mark, unmark, bye.");
->>>>>>> branch-Level-5
         }
     }
 
@@ -115,15 +97,9 @@ public class Timer {
         }
     }
 
-<<<<<<< HEAD
     private static int handleTodo(Task[] tasks, int taskCount, String input) throws DukeException {
-        // supports both "todo" and "todo <desc>"
         String description = input.length() > 4 ? input.substring(4).trim() : "";
 
-=======
-    private static int handleTodo(Task[] tasks, int taskCount, String input) {
-        String description = input.length() > 4 ? input.substring(4).trim() : "";
->>>>>>> branch-Level-5
         if (description.isEmpty()) {
             throw new DukeException("A todo needs a description. Example: todo read book");
         }
@@ -137,12 +113,7 @@ public class Timer {
         return taskCount;
     }
 
-<<<<<<< HEAD
     private static int handleDeadline(Task[] tasks, int taskCount, String input) throws DukeException {
-        // supports both "deadline" and "deadline <desc> /by <by>"
-=======
-    private static int handleDeadline(Task[] tasks, int taskCount, String input) {
->>>>>>> branch-Level-5
         String arguments = input.length() > 8 ? input.substring(8).trim() : "";
         String[] parts = arguments.split(" /by ", 2);
 
@@ -159,12 +130,7 @@ public class Timer {
         return taskCount;
     }
 
-<<<<<<< HEAD
     private static int handleEvent(Task[] tasks, int taskCount, String input) throws DukeException {
-        // supports both "event" and "event <desc> /from <from> /to <to>"
-=======
-    private static int handleEvent(Task[] tasks, int taskCount, String input) {
->>>>>>> branch-Level-5
         String arguments = input.length() > 5 ? input.substring(5).trim() : "";
 
         int fromPos = arguments.indexOf(" /from ");
@@ -212,11 +178,10 @@ public class Timer {
         System.out.println(LINE);
     }
 
-    // commandWord is "mark" or "unmark"
     private static int parseIndex(String input, String commandWord) {
         String rest = input.length() > commandWord.length() ? input.substring(commandWord.length()).trim() : "";
         try {
-            return Integer.parseInt(rest) - 1; // 1-based -> 0-based
+            return Integer.parseInt(rest) - 1;
         } catch (Exception e) {
             return -1;
         }
