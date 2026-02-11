@@ -10,8 +10,8 @@ IF ERRORLEVEL 1 (
     exit /b 1
 )
 
-REM Run the program (your main class is Timer)
-java -classpath ..\out Timer < input.txt > ACTUAL.TXT
+REM Run the program (your main class is duke.Timer)
+java -classpath ..\out duke.Timer < input.txt > ACTUAL.TXT
 
 REM Compare output
 FC ACTUAL.TXT EXPECTED.TXT

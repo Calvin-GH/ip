@@ -1,3 +1,5 @@
+package duke;
+
 import java.util.Scanner;
 
 public class Timer {
@@ -13,7 +15,7 @@ public class Timer {
 
         System.out.println("Hello you can call me\n" + logo);
         printLine();
-        System.out.println("Wassup! I'm Timer");
+        System.out.println("Wassup! I'm duke.Timer");
         System.out.println("How can I help you kind sir?");
         printLine();
 
@@ -104,7 +106,7 @@ public class Timer {
             throw new DukeException("A todo needs a description. Example: todo read book");
         }
         if (taskCount >= MAX_TASKS) {
-            throw new DukeException("Task limit reached. Please delete a task before adding more.");
+            throw new DukeException("duke.Task limit reached. Please delete a task before adding more.");
         }
 
         Task task = new Todo(description);
@@ -118,10 +120,10 @@ public class Timer {
         String[] parts = arguments.split(" /by ", 2);
 
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-            throw new DukeException("Deadline format: deadline <description> /by <by>");
+            throw new DukeException("duke.Deadline format: deadline <description> /by <by>");
         }
         if (taskCount >= MAX_TASKS) {
-            throw new DukeException("Task limit reached. Please delete a task before adding more.");
+            throw new DukeException("duke.Task limit reached. Please delete a task before adding more.");
         }
 
         Task task = new Deadline(parts[0].trim(), parts[1].trim());
@@ -137,7 +139,7 @@ public class Timer {
         int toPos = arguments.indexOf(" /to ");
 
         if (fromPos == -1 || toPos == -1 || toPos < fromPos) {
-            throw new DukeException("Event format: event <description> /from <from> /to <to>");
+            throw new DukeException("duke.Event format: event <description> /from <from> /to <to>");
         }
 
         String description = arguments.substring(0, fromPos).trim();
@@ -145,10 +147,10 @@ public class Timer {
         String to = arguments.substring(toPos + " /to ".length()).trim();
 
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            throw new DukeException("Event format: event <description> /from <from> /to <to>");
+            throw new DukeException("duke.Event format: event <description> /from <from> /to <to>");
         }
         if (taskCount >= MAX_TASKS) {
-            throw new DukeException("Task limit reached. Please delete a task before adding more.");
+            throw new DukeException("duke.Task limit reached. Please delete a task before adding more.");
         }
 
         Task task = new Event(description, from, to);
