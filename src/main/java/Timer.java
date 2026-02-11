@@ -47,22 +47,22 @@ public class Timer {
                 continue;
             }
 
-            if (input.startsWith("todo ")) {
+            if (input.equals("todo") || input.startsWith("todo ")) {
                 taskCount = handleTodo(tasks, taskCount, input);
                 continue;
             }
 
-            if (input.startsWith("deadline ")) {
+            if (input.equals("deadline") || input.startsWith("deadline ")) {
                 taskCount = handleDeadline(tasks, taskCount, input);
                 continue;
             }
 
-            if (input.startsWith("event ")) {
+            if (input.equals("event") || input.startsWith("event ")) {
                 taskCount = handleEvent(tasks, taskCount, input);
                 continue;
             }
 
-            printWrapped("Sorry, I don't understand that command yet.");
+            printWrapped("I don't understand that. Try: list, todo, deadline, event, mark, unmark, bye.");
         }
     }
 
@@ -97,7 +97,7 @@ public class Timer {
     }
 
     private static int handleTodo(Task[] tasks, int taskCount, String input) {
-        String description = input.substring("todo ".length()).trim();
+        String description = input.length() > 4 ? input.substring(4).trim() : "";
         if (description.isEmpty()) {
             printLine();
             System.out.println("Please provide a description for a todo.");
@@ -115,7 +115,7 @@ public class Timer {
     }
 
     private static int handleDeadline(Task[] tasks, int taskCount, String input) {
-        String arguments = input.substring("deadline ".length()).trim();
+        String arguments = input.length() > 8 ? input.substring(8).trim() : "";
         String[] parts = arguments.split(" /by ", 2);
 
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
@@ -136,7 +136,7 @@ public class Timer {
     }
 
     private static int handleEvent(Task[] tasks, int taskCount, String input) {
-        String arguments = input.substring("event ".length()).trim();
+        String arguments = input.length() > 5 ? input.substring(5).trim() : "";
 
         int fromPos = arguments.indexOf(" /from ");
         int toPos = arguments.indexOf(" /to ");
