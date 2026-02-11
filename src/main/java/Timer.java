@@ -25,44 +25,47 @@ public class Timer {
         while (true) {
             String input = scanner.nextLine().trim();
 
-            if (input.equals("bye")) {
-                printLine();
-                System.out.println("Bye. Hope to see you again soon!");
-                printLine();
-                break;
-            }
+            try {
+                if (input.equals("bye")) {
+                    printWrapped("Bye. Hope to see you again soon!");
+                    break;
+                }
 
-            if (input.equals("list")) {
-                printList(tasks, taskCount);
-                continue;
-            }
+                if (input.equals("list")) {
+                    printList(tasks, taskCount);
+                    continue;
+                }
 
-            if (input.startsWith("mark ")) {
-                handleMark(tasks, taskCount, input, true);
-                continue;
-            }
+                if (input.equals("mark") || input.startsWith("mark ")) {
+                    handleMark(tasks, taskCount, input, true);
+                    continue;
+                }
 
-            if (input.startsWith("unmark ")) {
-                handleMark(tasks, taskCount, input, false);
-                continue;
-            }
+                if (input.equals("unmark") || input.startsWith("unmark ")) {
+                    handleMark(tasks, taskCount, input, false);
+                    continue;
+                }
 
-            if (input.startsWith("todo ")) {
-                taskCount = handleTodo(tasks, taskCount, input);
-                continue;
-            }
+                if (input.equals("todo") || input.startsWith("todo ")) {
+                    taskCount = handleTodo(tasks, taskCount, input);
+                    continue;
+                }
 
-            if (input.startsWith("deadline ")) {
-                taskCount = handleDeadline(tasks, taskCount, input);
-                continue;
-            }
+                if (input.equals("deadline") || input.startsWith("deadline ")) {
+                    taskCount = handleDeadline(tasks, taskCount, input);
+                    continue;
+                }
 
-            if (input.startsWith("event ")) {
-                taskCount = handleEvent(tasks, taskCount, input);
-                continue;
-            }
+                if (input.equals("event") || input.startsWith("event ")) {
+                    taskCount = handleEvent(tasks, taskCount, input);
+                    continue;
+                }
 
-            printWrapped("Sorry, I don't understand that command yet.");
+                throw new DukeException("Sorry, I don't understand that command.");
+
+            } catch (DukeException e) {
+                printWrapped(e.getMessage());
+            }
         }
     }
 
@@ -72,13 +75,10 @@ public class Timer {
         printLine();
     }
 
-    private static void handleMark(Task[] tasks, int taskCount, String input, boolean markDone) {
-        int index = parseIndex(input, markDone ? "mark " : "unmark ");
+    private static void handleMark(Task[] tasks, int taskCount, String input, boolean markDone) throws DukeException {
+        int index = parseIndex(input, markDone ? "mark" : "unmark");
         if (!isValidIndex(index, taskCount)) {
-            printLine();
-            System.out.println("Please give a valid task number.");
-            printLine();
-            return;
+            throw new DukeException("Please provide a valid task number (e.g., mark 1).");
         }
 
         if (markDone) {
@@ -96,37 +96,33 @@ public class Timer {
         }
     }
 
-    private static int handleTodo(Task[] tasks, int taskCount, String input) {
-        String description = input.substring("todo ".length()).trim();
+    private static int handleTodo(Task[] tasks, int taskCount, String input) throws DukeException {
+        // supports both "todo" and "todo <desc>"
+        String description = input.length() > 4 ? input.substring(4).trim() : "";
+
         if (description.isEmpty()) {
-            printLine();
-            System.out.println("Please provide a description for a todo.");
-            printLine();
-            return taskCount;
+            throw new DukeException("A todo needs a description. Example: todo read book");
         }
         if (taskCount >= MAX_TASKS) {
-            printFullMessage();
-            return taskCount;
+            throw new DukeException("Task limit reached. Please delete a task before adding more.");
         }
+
         Task task = new Todo(description);
         tasks[taskCount++] = task;
         printTaskAdded(task, taskCount);
         return taskCount;
     }
 
-    private static int handleDeadline(Task[] tasks, int taskCount, String input) {
-        String arguments = input.substring("deadline ".length()).trim();
+    private static int handleDeadline(Task[] tasks, int taskCount, String input) throws DukeException {
+        // supports both "deadline" and "deadline <desc> /by <by>"
+        String arguments = input.length() > 8 ? input.substring(8).trim() : "";
         String[] parts = arguments.split(" /by ", 2);
 
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-            printLine();
-            System.out.println("Please use: deadline <description> /by <by>");
-            printLine();
-            return taskCount;
+            throw new DukeException("Deadline format: deadline <description> /by <by>");
         }
         if (taskCount >= MAX_TASKS) {
-            printFullMessage();
-            return taskCount;
+            throw new DukeException("Task limit reached. Please delete a task before adding more.");
         }
 
         Task task = new Deadline(parts[0].trim(), parts[1].trim());
@@ -135,17 +131,15 @@ public class Timer {
         return taskCount;
     }
 
-    private static int handleEvent(Task[] tasks, int taskCount, String input) {
-        String arguments = input.substring("event ".length()).trim();
+    private static int handleEvent(Task[] tasks, int taskCount, String input) throws DukeException {
+        // supports both "event" and "event <desc> /from <from> /to <to>"
+        String arguments = input.length() > 5 ? input.substring(5).trim() : "";
 
         int fromPos = arguments.indexOf(" /from ");
         int toPos = arguments.indexOf(" /to ");
 
         if (fromPos == -1 || toPos == -1 || toPos < fromPos) {
-            printLine();
-            System.out.println("Please use: event <description> /from <from> /to <to>");
-            printLine();
-            return taskCount;
+            throw new DukeException("Event format: event <description> /from <from> /to <to>");
         }
 
         String description = arguments.substring(0, fromPos).trim();
@@ -153,14 +147,10 @@ public class Timer {
         String to = arguments.substring(toPos + " /to ".length()).trim();
 
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            printLine();
-            System.out.println("Please use: event <description> /from <from> /to <to>");
-            printLine();
-            return taskCount;
+            throw new DukeException("Event format: event <description> /from <from> /to <to>");
         }
         if (taskCount >= MAX_TASKS) {
-            printFullMessage();
-            return taskCount;
+            throw new DukeException("Task limit reached. Please delete a task before adding more.");
         }
 
         Task task = new Event(description, from, to);
@@ -186,19 +176,15 @@ public class Timer {
         printLine();
     }
 
-    private static void printFullMessage() {
-        printLine();
-        System.out.println("Sorry, I can't add more tasks (limit reached).");
-        printLine();
-    }
-
     private static void printLine() {
         System.out.println(LINE);
     }
 
-    private static int parseIndex(String input, String prefix) {
+    // commandWord is "mark" or "unmark"
+    private static int parseIndex(String input, String commandWord) {
+        String rest = input.length() > commandWord.length() ? input.substring(commandWord.length()).trim() : "";
         try {
-            return Integer.parseInt(input.substring(prefix.length()).trim()) - 1; // 1-based -> 0-based
+            return Integer.parseInt(rest) - 1; // 1-based -> 0-based
         } catch (Exception e) {
             return -1;
         }
