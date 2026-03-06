@@ -1,30 +1,50 @@
-# Duke User Guide
+# Timer User Guide
 
-// Update the title above to match the actual product name
+Timer is a command-line chatbot for managing tasks.
 
-// Product screenshot goes here
+## Features
 
-// Product intro goes here
+### Add Todo
 
-## Adding deadlines
+todo DESCRIPTION
 
-// Describe the action and its outcome.
+Example:
+todo read book
 
-// Give examples of usage
+### Add Deadline
 
-Example: `keyword (optional arguments)`
+deadline DESCRIPTION /by YYYY-MM-DD
 
-// A description of the expected outcome goes here
+Example:
+deadline submit report /by 2026-03-20
 
-```
-expected output
-```
+### Add Event
 
-## Feature ABC
+event DESCRIPTION /from START /to END
 
-// Feature details
+### List tasks
 
+list
 
-## Feature XYZ
+### Mark a task
 
-// Feature details
+mark INDEX
+
+### Unmark a task
+
+unmark INDEX
+
+### Delete a task
+
+delete INDEX
+
+### Find tasks
+
+find KEYWORD
+
+Example:
+find book
+
+### Exit
+
+bye
