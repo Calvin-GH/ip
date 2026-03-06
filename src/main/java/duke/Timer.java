@@ -53,9 +53,11 @@ public class Timer {
                     ui.showTaskAdded(task, tasks.size());
                 } else if (input.equals("delete") || input.startsWith("delete ")) {
                     handleDelete(input);
+                } else if (input.equals("find") || input.startsWith("find ")) {
+                    handleFind(input);
                 } else {
                     throw new DukeException("Sorry, I don't understand that command. "
-                            + "Try: list, todo, deadline, event, delete, mark, unmark, bye.");
+                            + "Try: list, todo, deadline, event, delete, find, mark, unmark, bye.");
                 }
             } catch (DukeException e) {
                 ui.showError(e.getMessage());
@@ -90,6 +92,15 @@ public class Timer {
         Task removedTask = tasks.delete(index);
         storage.save(tasks.getTasks());
         ui.showDeleted(removedTask, tasks.size());
+    }
+
+    private void handleFind(String input) throws DukeException {
+        String keyword = input.length() > 4 ? input.substring(4).trim() : "";
+        if (keyword.isEmpty()) {
+            throw new DukeException("Please provide a keyword to find.");
+        }
+
+        ui.showFindResults(tasks.find(keyword));
     }
 
     public static void main(String[] args) {
