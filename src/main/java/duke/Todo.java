@@ -1,6 +1,15 @@
 package duke;
 
+/**
+ * Represents a simple todo task.
+ */
 public class Todo extends Task {
+
+    /**
+     * Creates a todo task.
+     *
+     * @param description Task description.
+     */
     public Todo(String description) {
         super(description);
     }
