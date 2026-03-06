@@ -1,4 +1,0 @@
-T | 0 | read book
-D | 0 | submit report | 2026-03-20
-E | 0 | project meeting | Monday 2pm | 4pm
-T | 0 | buy groceries
