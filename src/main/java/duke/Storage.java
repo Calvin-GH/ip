@@ -8,15 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Storage {
-    private static final Path FILE_PATH = Paths.get("data", "tasks.txt");
+    private final Path filePath;
 
-    public static ArrayList<Task> load() throws DukeException {
+    public Storage(String filePath) {
+        this.filePath = Paths.get(filePath);
+    }
+
+    public ArrayList<Task> load() throws DukeException {
         ArrayList<Task> tasks = new ArrayList<>();
 
         try {
             createFileIfMissing();
 
-            List<String> lines = Files.readAllLines(FILE_PATH);
+            List<String> lines = Files.readAllLines(filePath);
             for (String line : lines) {
                 if (line.trim().isEmpty()) {
                     continue;
@@ -30,7 +34,7 @@ public class Storage {
         return tasks;
     }
 
-    public static void save(ArrayList<Task> tasks) throws DukeException {
+    public void save(ArrayList<Task> tasks) throws DukeException {
         try {
             createFileIfMissing();
 
@@ -39,22 +43,22 @@ public class Storage {
                 lines.add(formatTask(task));
             }
 
-            Files.write(FILE_PATH, lines);
+            Files.write(filePath, lines);
         } catch (IOException e) {
             throw new DukeException("Unable to save tasks to file.");
         }
     }
 
-    private static void createFileIfMissing() throws IOException {
-        if (FILE_PATH.getParent() != null) {
-            Files.createDirectories(FILE_PATH.getParent());
+    private void createFileIfMissing() throws IOException {
+        if (filePath.getParent() != null) {
+            Files.createDirectories(filePath.getParent());
         }
-        if (!Files.exists(FILE_PATH)) {
-            Files.createFile(FILE_PATH);
+        if (!Files.exists(filePath)) {
+            Files.createFile(filePath);
         }
     }
 
-    private static Task parseTask(String line) throws DukeException {
+    private Task parseTask(String line) throws DukeException {
         String[] parts = line.split(" \\| ");
 
         if (parts.length < 3) {
@@ -96,7 +100,7 @@ public class Storage {
         return task;
     }
 
-    private static String formatTask(Task task) {
+    private String formatTask(Task task) {
         String status = task.isDone() ? "1" : "0";
 
         if (task instanceof Todo) {
