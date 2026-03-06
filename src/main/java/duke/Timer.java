@@ -1,10 +1,10 @@
 package duke;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Timer {
     private static final String LINE = "____________________________________________________________";
-    private static final int MAX_TASKS = 100;
 
     public static void main(String[] args) {
         String logo = " _____                      \n"
@@ -15,14 +15,19 @@ public class Timer {
 
         System.out.println("Hello you can call me\n" + logo);
         printLine();
-        System.out.println("Wassup! I'm duke.Timer");
+        System.out.println("Wassup! I'm Timer");
         System.out.println("How can I help you kind sir?");
         printLine();
 
         Scanner scanner = new Scanner(System.in);
 
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        ArrayList<Task> tasks;
+        try {
+            tasks = Storage.load();
+        } catch (DukeException e) {
+            printWrapped(e.getMessage());
+            tasks = new ArrayList<>();
+        }
 
         while (true) {
             String input = scanner.nextLine().trim();
@@ -34,32 +39,32 @@ public class Timer {
                 }
 
                 if (input.equals("list")) {
-                    printList(tasks, taskCount);
+                    printList(tasks);
                     continue;
                 }
 
                 if (input.equals("mark") || input.startsWith("mark ")) {
-                    handleMark(tasks, taskCount, input, true);
+                    handleMark(tasks, input, true);
                     continue;
                 }
 
                 if (input.equals("unmark") || input.startsWith("unmark ")) {
-                    handleMark(tasks, taskCount, input, false);
+                    handleMark(tasks, input, false);
                     continue;
                 }
 
                 if (input.equals("todo") || input.startsWith("todo ")) {
-                    taskCount = handleTodo(tasks, taskCount, input);
+                    handleTodo(tasks, input);
                     continue;
                 }
 
                 if (input.equals("deadline") || input.startsWith("deadline ")) {
-                    taskCount = handleDeadline(tasks, taskCount, input);
+                    handleDeadline(tasks, input);
                     continue;
                 }
 
                 if (input.equals("event") || input.startsWith("event ")) {
-                    taskCount = handleEvent(tasks, taskCount, input);
+                    handleEvent(tasks, input);
                     continue;
                 }
 
@@ -78,68 +83,64 @@ public class Timer {
         printLine();
     }
 
-    private static void handleMark(Task[] tasks, int taskCount, String input, boolean markDone) throws DukeException {
+    private static void handleMark(ArrayList<Task> tasks, String input, boolean markDone) throws DukeException {
         int index = parseIndex(input, markDone ? "mark" : "unmark");
-        if (!isValidIndex(index, taskCount)) {
+        if (!isValidIndex(index, tasks.size())) {
             throw new DukeException("Please provide a valid task number (e.g., mark 1).");
         }
 
         if (markDone) {
-            tasks[index].markDone();
+            tasks.get(index).markDone();
+            Storage.save(tasks);
             printLine();
             System.out.println("Nice! I've marked this task as done:");
-            System.out.println("  " + tasks[index]);
+            System.out.println("  " + tasks.get(index));
             printLine();
         } else {
-            tasks[index].unmarkDone();
+            tasks.get(index).unmarkDone();
+            Storage.save(tasks);
             printLine();
             System.out.println("OK, I've marked this task as not done yet:");
-            System.out.println("  " + tasks[index]);
+            System.out.println("  " + tasks.get(index));
             printLine();
         }
     }
 
-    private static int handleTodo(Task[] tasks, int taskCount, String input) throws DukeException {
+    private static void handleTodo(ArrayList<Task> tasks, String input) throws DukeException {
         String description = input.length() > 4 ? input.substring(4).trim() : "";
 
         if (description.isEmpty()) {
             throw new DukeException("A todo needs a description. Example: todo read book");
         }
-        if (taskCount >= MAX_TASKS) {
-            throw new DukeException("duke.Task limit reached. Please delete a task before adding more.");
-        }
 
         Task task = new Todo(description);
-        tasks[taskCount++] = task;
-        printTaskAdded(task, taskCount);
-        return taskCount;
+        tasks.add(task);
+        Storage.save(tasks);
+        printTaskAdded(task, tasks.size());
     }
 
-    private static int handleDeadline(Task[] tasks, int taskCount, String input) throws DukeException {
+    private static void handleDeadline(ArrayList<Task> tasks, String input) throws DukeException {
         String arguments = input.length() > 8 ? input.substring(8).trim() : "";
         String[] parts = arguments.split(" /by ", 2);
 
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-            throw new DukeException("duke.Deadline format: deadline <description> /by <by>");
-        }
-        if (taskCount >= MAX_TASKS) {
-            throw new DukeException("duke.Task limit reached. Please delete a task before adding more.");
+            throw new DukeException("Deadline format: deadline <description> /by <by>");
         }
 
         Task task = new Deadline(parts[0].trim(), parts[1].trim());
-        tasks[taskCount++] = task;
-        printTaskAdded(task, taskCount);
-        return taskCount;
+        tasks.add(task);
+        Storage.save(tasks);
+        printTaskAdded(task, tasks.size());
     }
 
-    private static int handleEvent(Task[] tasks, int taskCount, String input) throws DukeException {
+    private static void handleEvent(ArrayList<Task> tasks, String input) throws DukeException {
         String arguments = input.length() > 5 ? input.substring(5).trim() : "";
 
         int fromPos = arguments.indexOf(" /from ");
         int toPos = arguments.indexOf(" /to ");
 
         if (fromPos == -1 || toPos == -1 || toPos < fromPos) {
-            throw new DukeException("duke.Event format: event <description> /from <from> /to <to>");
+            throw new DukeException("Event format: event <description> /from <from> /to <to>");
         }
 
         String description = arguments.substring(0, fromPos).trim();
@@ -147,23 +148,20 @@ public class Timer {
         String to = arguments.substring(toPos + " /to ".length()).trim();
 
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            throw new DukeException("duke.Event format: event <description> /from <from> /to <to>");
-        }
-        if (taskCount >= MAX_TASKS) {
-            throw new DukeException("duke.Task limit reached. Please delete a task before adding more.");
+            throw new DukeException("Event format: event <description> /from <from> /to <to>");
         }
 
         Task task = new Event(description, from, to);
-        tasks[taskCount++] = task;
-        printTaskAdded(task, taskCount);
-        return taskCount;
+        tasks.add(task);
+        Storage.save(tasks);
+        printTaskAdded(task, tasks.size());
     }
 
-    private static void printList(Task[] tasks, int taskCount) {
+    private static void printList(ArrayList<Task> tasks) {
         printLine();
         System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + "." + tasks.get(i));
         }
         printLine();
     }
@@ -181,7 +179,9 @@ public class Timer {
     }
 
     private static int parseIndex(String input, String commandWord) {
-        String rest = input.length() > commandWord.length() ? input.substring(commandWord.length()).trim() : "";
+        String rest = input.length() > commandWord.length()
+                ? input.substring(commandWord.length()).trim()
+                : "";
         try {
             return Integer.parseInt(rest) - 1;
         } catch (Exception e) {
