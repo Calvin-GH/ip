@@ -31,6 +31,9 @@ public class Timer {
             printWrapped(e.getMessage());
             tasks = new ArrayList<>();
         }
+<<<<<<< HEAD
+>>>>>>> branch-Level-7
+=======
 >>>>>>> branch-Level-7
 
         while (true) {
@@ -70,11 +73,14 @@ public class Timer {
                 if (input.equals("event") || input.startsWith("event ")) {
                     handleEvent(tasks, input);
 <<<<<<< HEAD
+<<<<<<< HEAD
                     continue;
                 }
 
                 if (input.equals("delete") || input.startsWith("delete ")) {
                     handleDelete(tasks, input);
+=======
+>>>>>>> branch-Level-7
 =======
 >>>>>>> branch-Level-7
                     continue;
@@ -104,6 +110,10 @@ public class Timer {
         if (markDone) {
             tasks.get(index).markDone();
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+            Storage.save(tasks);
+>>>>>>> branch-Level-7
 =======
             Storage.save(tasks);
 >>>>>>> branch-Level-7
@@ -114,6 +124,10 @@ public class Timer {
         } else {
             tasks.get(index).unmarkDone();
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+            Storage.save(tasks);
+>>>>>>> branch-Level-7
 =======
             Storage.save(tasks);
 >>>>>>> branch-Level-7
@@ -134,6 +148,10 @@ public class Timer {
         Task task = new Todo(description);
         tasks.add(task);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+        Storage.save(tasks);
+>>>>>>> branch-Level-7
 =======
         Storage.save(tasks);
 >>>>>>> branch-Level-7
@@ -151,6 +169,10 @@ public class Timer {
         Task task = new Deadline(parts[0].trim(), parts[1].trim());
         tasks.add(task);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+        Storage.save(tasks);
+>>>>>>> branch-Level-7
 =======
         Storage.save(tasks);
 >>>>>>> branch-Level-7
@@ -178,6 +200,7 @@ public class Timer {
         Task task = new Event(description, from, to);
         tasks.add(task);
 <<<<<<< HEAD
+<<<<<<< HEAD
         printTaskAdded(task, tasks.size());
     }
 
@@ -195,6 +218,12 @@ public class Timer {
         printLine();
     }
 
+=======
+        Storage.save(tasks);
+        printTaskAdded(task, tasks.size());
+    }
+
+>>>>>>> branch-Level-7
 =======
         Storage.save(tasks);
         printTaskAdded(task, tasks.size());
