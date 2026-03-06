@@ -20,9 +20,6 @@ public class Timer {
         printLine();
 
         Scanner scanner = new Scanner(System.in);
-<<<<<<< HEAD
-        ArrayList<Task> tasks = new ArrayList<>();
-=======
 
         ArrayList<Task> tasks;
         try {
@@ -31,10 +28,6 @@ public class Timer {
             printWrapped(e.getMessage());
             tasks = new ArrayList<>();
         }
-<<<<<<< HEAD
->>>>>>> branch-Level-7
-=======
->>>>>>> branch-Level-7
 
         while (true) {
             String input = scanner.nextLine().trim();
@@ -72,17 +65,11 @@ public class Timer {
 
                 if (input.equals("event") || input.startsWith("event ")) {
                     handleEvent(tasks, input);
-<<<<<<< HEAD
-<<<<<<< HEAD
                     continue;
                 }
 
                 if (input.equals("delete") || input.startsWith("delete ")) {
                     handleDelete(tasks, input);
-=======
->>>>>>> branch-Level-7
-=======
->>>>>>> branch-Level-7
                     continue;
                 }
 
@@ -109,28 +96,14 @@ public class Timer {
 
         if (markDone) {
             tasks.get(index).markDone();
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
             Storage.save(tasks);
->>>>>>> branch-Level-7
-=======
-            Storage.save(tasks);
->>>>>>> branch-Level-7
             printLine();
             System.out.println("Nice! I've marked this task as done:");
             System.out.println("  " + tasks.get(index));
             printLine();
         } else {
             tasks.get(index).unmarkDone();
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
             Storage.save(tasks);
->>>>>>> branch-Level-7
-=======
-            Storage.save(tasks);
->>>>>>> branch-Level-7
             printLine();
             System.out.println("OK, I've marked this task as not done yet:");
             System.out.println("  " + tasks.get(index));
@@ -147,14 +120,7 @@ public class Timer {
 
         Task task = new Todo(description);
         tasks.add(task);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
         Storage.save(tasks);
->>>>>>> branch-Level-7
-=======
-        Storage.save(tasks);
->>>>>>> branch-Level-7
         printTaskAdded(task, tasks.size());
     }
 
@@ -168,14 +134,7 @@ public class Timer {
 
         Task task = new Deadline(parts[0].trim(), parts[1].trim());
         tasks.add(task);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
         Storage.save(tasks);
->>>>>>> branch-Level-7
-=======
-        Storage.save(tasks);
->>>>>>> branch-Level-7
         printTaskAdded(task, tasks.size());
     }
 
@@ -199,8 +158,7 @@ public class Timer {
 
         Task task = new Event(description, from, to);
         tasks.add(task);
-<<<<<<< HEAD
-<<<<<<< HEAD
+        Storage.save(tasks);
         printTaskAdded(task, tasks.size());
     }
 
@@ -211,6 +169,7 @@ public class Timer {
         }
 
         Task removedTask = tasks.remove(index);
+        Storage.save(tasks);
         printLine();
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + removedTask);
@@ -218,18 +177,6 @@ public class Timer {
         printLine();
     }
 
-=======
-        Storage.save(tasks);
-        printTaskAdded(task, tasks.size());
-    }
-
->>>>>>> branch-Level-7
-=======
-        Storage.save(tasks);
-        printTaskAdded(task, tasks.size());
-    }
-
->>>>>>> branch-Level-7
     private static void printList(ArrayList<Task> tasks) {
         printLine();
         System.out.println("Here are the tasks in your list:");
