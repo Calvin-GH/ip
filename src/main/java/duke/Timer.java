@@ -20,14 +20,7 @@ public class Timer {
         printLine();
 
         Scanner scanner = new Scanner(System.in);
-
-        ArrayList<Task> tasks;
-        try {
-            tasks = Storage.load();
-        } catch (DukeException e) {
-            printWrapped(e.getMessage());
-            tasks = new ArrayList<>();
-        }
+        ArrayList<Task> tasks = new ArrayList<>();
 
         while (true) {
             String input = scanner.nextLine().trim();
@@ -96,14 +89,12 @@ public class Timer {
 
         if (markDone) {
             tasks.get(index).markDone();
-            Storage.save(tasks);
             printLine();
             System.out.println("Nice! I've marked this task as done:");
             System.out.println("  " + tasks.get(index));
             printLine();
         } else {
             tasks.get(index).unmarkDone();
-            Storage.save(tasks);
             printLine();
             System.out.println("OK, I've marked this task as not done yet:");
             System.out.println("  " + tasks.get(index));
@@ -120,7 +111,6 @@ public class Timer {
 
         Task task = new Todo(description);
         tasks.add(task);
-        Storage.save(tasks);
         printTaskAdded(task, tasks.size());
     }
 
@@ -134,7 +124,6 @@ public class Timer {
 
         Task task = new Deadline(parts[0].trim(), parts[1].trim());
         tasks.add(task);
-        Storage.save(tasks);
         printTaskAdded(task, tasks.size());
     }
 
@@ -158,7 +147,6 @@ public class Timer {
 
         Task task = new Event(description, from, to);
         tasks.add(task);
-        Storage.save(tasks);
         printTaskAdded(task, tasks.size());
     }
 
@@ -169,7 +157,6 @@ public class Timer {
         }
 
         Task removedTask = tasks.remove(index);
-        Storage.save(tasks);
         printLine();
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + removedTask);
@@ -199,7 +186,9 @@ public class Timer {
     }
 
     private static int parseIndex(String input, String commandWord) {
-        String rest = input.length() > commandWord.length() ? input.substring(commandWord.length()).trim() : "";
+        String rest = input.length() > commandWord.length()
+                ? input.substring(commandWord.length()).trim()
+                : "";
         try {
             return Integer.parseInt(rest) - 1;
         } catch (Exception e) {
