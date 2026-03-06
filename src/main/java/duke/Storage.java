@@ -1,5 +1,6 @@
 package duke;
 
+import java.time.LocalDate;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -79,7 +80,7 @@ public class Storage {
             if (parts.length < 4) {
                 throw new DukeException("Corrupted deadline data: " + line);
             }
-            task = new Deadline(description, parts[3]);
+            task = new Deadline(description, LocalDate.parse(parts[3]));
             break;
         case "E":
             if (parts.length < 5) {

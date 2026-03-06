@@ -1,5 +1,7 @@
 package duke;
 
+import java.time.LocalDate;
+
 public class Parser {
     public static int parseIndex(String input, String commandWord) {
         String rest = input.length() > commandWord.length()
@@ -25,10 +27,15 @@ public class Parser {
         String[] parts = arguments.split(" /by ", 2);
 
         if (parts.length < 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-            throw new DukeException("Deadline format: deadline <description> /by <by>");
+            throw new DukeException("Deadline format: deadline <description> /by <yyyy-mm-dd>");
         }
 
-        return new Deadline(parts[0].trim(), parts[1].trim());
+        try {
+            LocalDate by = LocalDate.parse(parts[1].trim());
+            return new Deadline(parts[0].trim(), by);
+        } catch (Exception e) {
+            throw new DukeException("Please enter the deadline in yyyy-mm-dd format.");
+        }
     }
 
     public static Event parseEvent(String input) throws DukeException {
